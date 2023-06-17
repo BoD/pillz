@@ -23,10 +23,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jraf.android.pillz.ui.main
+package org.jraf.android.pillz.ui.tile
 
 import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.wear.protolayout.ActionBuilders
+import androidx.wear.protolayout.ColorBuilders
 import androidx.wear.protolayout.DimensionBuilders
 import androidx.wear.protolayout.LayoutElementBuilders
 import androidx.wear.protolayout.ModifiersBuilders
@@ -36,17 +37,29 @@ import androidx.wear.protolayout.TimelineBuilders.Timeline
 import androidx.wear.protolayout.material.Button
 import androidx.wear.protolayout.material.ButtonColors
 import androidx.wear.protolayout.material.ButtonDefaults
+import androidx.wear.protolayout.material.Text
+import androidx.wear.protolayout.material.Typography
 import androidx.wear.tiles.RequestBuilders
 import androidx.wear.tiles.TileBuilders
 import androidx.wear.tiles.TileService
 import com.google.common.util.concurrent.ListenableFuture
 import org.jraf.android.pillz.R
-import org.jraf.android.pillz.data.tookPills
+import org.jraf.android.pillz.data.Data
 import org.jraf.android.pillz.ui.theme.PillzTileColors
+import java.util.concurrent.TimeUnit
 
 private const val BUTTON_CLICKED_ID: String = "button_clicked"
 
-class MainTileService : TileService() {
+private val FRESHNESS_INTERVAL_MS = TimeUnit.HOURS.toMillis(12)
+
+class PillzTileService : TileService() {
+    private lateinit var data: Data
+
+    override fun onCreate() {
+        super.onCreate()
+        data = Data(this)
+    }
+
     override fun onTileResourcesRequest(requestParams: RequestBuilders.ResourcesRequest): ListenableFuture<ResourceBuilders.Resources> {
         return CallbackToFutureAdapter.getFuture { callback ->
             callback.set(
@@ -61,8 +74,7 @@ class MainTileService : TileService() {
 
     override fun onTileRequest(requestParams: RequestBuilders.TileRequest): ListenableFuture<TileBuilders.Tile> {
         if (requestParams.currentState.lastClickableId == BUTTON_CLICKED_ID) {
-            // Button has been clicked: we flip the state
-            tookPills = !tookPills
+            data.tookPills()
         }
         return CallbackToFutureAdapter.getFuture { callback ->
             callback.set(
@@ -81,6 +93,7 @@ class MainTileService : TileService() {
                             )
                             .build()
                     )
+                    .setFreshnessIntervalMillis(FRESHNESS_INTERVAL_MS)
                     .build()
             )
         }
@@ -88,7 +101,13 @@ class MainTileService : TileService() {
 
     private fun buildLayout(): LayoutElementBuilders.LayoutElement {
         val clickable = ModifiersBuilders.Clickable.Builder()
-            .setId(BUTTON_CLICKED_ID)
+            .let {
+                if (data.shouldTakePills()) {
+                    it.setId(BUTTON_CLICKED_ID)
+                } else {
+                    it
+                }
+            }
             .setOnClick(ActionBuilders.LoadAction.Builder().build())
             .build()
         return LayoutElementBuilders.Box.Builder()
@@ -97,24 +116,49 @@ class MainTileService : TileService() {
             .setWidth(DimensionBuilders.expand())
             .setHeight(DimensionBuilders.expand())
             .addContent(
-                Button.Builder(this@MainTileService, clickable)
-                    .setSize(ButtonDefaults.EXTRA_LARGE_SIZE)
+                LayoutElementBuilders.Column.Builder()
+                    .setHorizontalAlignment(LayoutElementBuilders.HORIZONTAL_ALIGN_CENTER)
+                    .addContent(
+                        Button.Builder(this@PillzTileService, clickable)
+                            .setSize(ButtonDefaults.EXTRA_LARGE_SIZE)
 
-                    // Uncomment that part... now it works
-//                    .setButtonColors(
-//                        if (tookPills) {
-//                            ButtonColors.primaryButtonColors(PillzTileColors)
-//                        } else {
-//                            ButtonColors.secondaryButtonColors(PillzTileColors)
-//                        }
-//                    )
+                            .setButtonColors(
+                                if (data.shouldTakePills()) {
+                                    ButtonColors.primaryButtonColors(PillzTileColors)
+                                } else {
+                                    ButtonColors.secondaryButtonColors(PillzTileColors)
+                                }
+                            )
 
-                    .setIconContent(
-                        if (tookPills) {
-                            R.drawable.ic_pill_off
-                        } else {
-                            R.drawable.ic_pill
-                        }
+                            .setIconContent(
+                                if (data.shouldTakePills()) {
+                                    R.drawable.ic_pill
+                                } else {
+                                    R.drawable.ic_pill_off
+                                }
+                            )
+                            .build()
+                    )
+                    .addContent(
+                        Text.Builder(
+                            this, if (data.shouldTakePills()) {
+                                getString(R.string.tile_shouldTakePills)
+                            } else {
+                                getString(R.string.tile_pillsTaken)
+                            }
+                        )
+                            .setModifiers(
+                                ModifiersBuilders.Modifiers.Builder()
+                                    .setPadding(
+                                        ModifiersBuilders.Padding.Builder()
+                                            .setTop(DimensionBuilders.dp(6F))
+                                            .build()
+                                    )
+                                    .build()
+                            )
+                            .setTypography(Typography.TYPOGRAPHY_CAPTION1)
+                            .setColor(ColorBuilders.argb(PillzTileColors.onSurface))
+                            .build()
                     )
                     .build()
             )

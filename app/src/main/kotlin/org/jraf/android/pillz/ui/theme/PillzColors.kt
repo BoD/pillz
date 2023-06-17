@@ -24,21 +24,13 @@
  */
 package org.jraf.android.pillz.ui.theme
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.wear.compose.material.Colors
+import androidx.wear.protolayout.material.Colors
 
-private val Orange700 = Color(0xFFF57C00)
+private val Orange700 = 0xFFF57C00
 
-val PillzColors: Colors = Colors(
-    primary = Orange700,
-)
-
-val PillzTileColors: androidx.wear.protolayout.material.Colors = PillzColors.toTileColors()
-
-private fun Colors.toTileColors() = androidx.wear.protolayout.material.Colors(
-    /* primary = */ primary.toArgb(),
-    /* onPrimary = */ onPrimary.toArgb(),
-    /* surface = */ surface.toArgb(),
-    /* onSurface = */ onSurface.toArgb()
+val PillzTileColors = Colors(
+    /* primary = */ Orange700.toInt(),
+    /* onPrimary = */ Colors.DEFAULT.onPrimary,
+    /* surface = */ Colors.DEFAULT.surface,
+    /* onSurface = */ Colors.DEFAULT.onSurface
 )

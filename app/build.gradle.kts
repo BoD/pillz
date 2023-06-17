@@ -39,14 +39,6 @@ android {
         }
     }
 
-    buildFeatures {
-        compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -64,15 +56,8 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.wear.compose.material)
-    implementation(libs.androidx.wear.compose.foundation)
     implementation(libs.androidx.wear.tiles.tiles)
     implementation(libs.androidx.wear.protolayout.material)
-
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-
-    implementation(libs.androidx.lifecycle.runtime.ktx)
 
     implementation(libs.androidx.concurrent.futures.ktx)
 

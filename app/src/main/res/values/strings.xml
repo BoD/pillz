@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">pillz</string>
+    <string name="tile_shouldTakePills">Take your pills!</string>
+    <string name="tile_pillsTaken">You took your pills ✅</string>
 </resources>

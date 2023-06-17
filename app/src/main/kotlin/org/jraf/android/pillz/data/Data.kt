@@ -26,18 +26,29 @@
 package org.jraf.android.pillz.data
 
 import android.content.Context
-import kotlinx.coroutines.flow.MutableStateFlow
 import org.jraf.android.kprefs.Prefs
+import org.jraf.android.pillz.util.logd
+import java.util.concurrent.TimeUnit
+
+private val TWO_DAYS_MS = TimeUnit.DAYS.toMillis(2)
 
 class Data(context: Context) {
     private val prefs = Prefs(context)
 
-    val lastDate: MutableStateFlow<Long> by prefs.LongFlow(default = 0L)
+    private var lastPillsTakenDate: Long by prefs.Long(default = 0L)
 
-}
-
-var tookPills = false
-    set(value) {
-        println("XXX value: $value")
-        field = value
+    fun shouldTakePills(): Boolean {
+        val now = System.currentTimeMillis()
+        return now - lastPillsTakenDate > TWO_DAYS_MS
     }
+
+    fun tookPills() {
+        logd("Clicked 'take pills'")
+        lastPillsTakenDate = nowAt0h()
+    }
+
+    private fun nowAt0h(): Long {
+        val now = System.currentTimeMillis()
+        return now - now % TWO_DAYS_MS
+    }
+}

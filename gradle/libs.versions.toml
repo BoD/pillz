@@ -3,18 +3,10 @@ agp = "8.2.0-alpha08"
 kotlin = "1.8.21"
 benManes = "0.47.0"
 
-androidx-wear-compose = "1.1.2"
 androidx-wear-tiles = "1.2.0-alpha07"
 androidx-wear-protolayout-material="1.0.0-alpha11"
 
 androidx-lifecycle = "2.6.1"
-
-# See https://developer.android.com/jetpack/androidx/releases/compose-kotlin
-androidx-compose-compiler = "1.4.7"
-
-androidx-compose = "1.4.3"
-
-androidx-activity = "1.7.2"
 
 androidx-concurrent-futures = "1.1.0"
 
@@ -30,19 +22,10 @@ benManes = { id = "com.github.ben-manes.versions", version.ref = "benManes" }
 
 [libraries]
 
-androidx-wear-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "androidx-wear-compose" }
-androidx-wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "androidx-wear-compose" }
 androidx-wear-tiles-tiles = { group = "androidx.wear.tiles", name = "tiles", version.ref = "androidx-wear-tiles" }
 androidx-wear-protolayout-material = { group = "androidx.wear.protolayout", name = "protolayout-material", version.ref = "androidx-wear-protolayout-material" }
 
 androidx-concurrent-futures-ktx = { group = "androidx.concurrent", name = "concurrent-futures-ktx", version.ref = "androidx-concurrent-futures" }
-
-androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "androidx-compose" }
-
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
-
-androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
-
 
 
 jraf-kprefs = { group = "org.jraf", name = "kprefs", version.ref = "kprefs" }
