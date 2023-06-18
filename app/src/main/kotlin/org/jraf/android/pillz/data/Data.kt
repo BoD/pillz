@@ -30,7 +30,9 @@ import org.jraf.android.kprefs.Prefs
 import org.jraf.android.pillz.util.logd
 import java.util.concurrent.TimeUnit
 
-private val TWO_DAYS_MS = TimeUnit.DAYS.toMillis(2)
+private const val DAYS_BETWEEN_PILLS = 2L
+private val ONE_DAYS_MS = TimeUnit.DAYS.toMillis(1)
+private val TWO_DAYS_MS = TimeUnit.DAYS.toMillis(DAYS_BETWEEN_PILLS)
 
 class Data(context: Context) {
     private val prefs = Prefs(context)
@@ -38,8 +40,8 @@ class Data(context: Context) {
     private var lastPillsTakenDate: Long by prefs.Long(default = 0L)
 
     fun shouldTakePills(): Boolean {
-        val now = System.currentTimeMillis()
-        return now - lastPillsTakenDate > TWO_DAYS_MS
+        val now = nowAt0h()
+        return now - lastPillsTakenDate >= TWO_DAYS_MS
     }
 
     fun tookPills() {
@@ -49,6 +51,6 @@ class Data(context: Context) {
 
     private fun nowAt0h(): Long {
         val now = System.currentTimeMillis()
-        return now - now % TWO_DAYS_MS
+        return now - now % ONE_DAYS_MS
     }
 }
